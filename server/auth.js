@@ -15,32 +15,30 @@ module.exports = function(passport) {
     return (userData.password === userData.passwordRepeat)
   }
 
-  router.post('/signup', function(req, res) {
-    if (!validateReq(req.body)) {
-      return res.send('incomplete')
-    } else if(!validatePassword(req.body)) {
-      return res.send('passwords')
-    } else {
-      User.findOne({
-        email: req.body.email
-      }, (err, user) => {
-        if(user) {
-          return res.send('exists')
-        } else if (!user) {
-          new User({
-            email: req.body.email,
-            password: req.body.password
-          })
-          .save(function(err, user) {
-            if (err) {
-              res.send(err);
-              return;
-            }
-            res.send(true)
-          })
-        }
-      })
-    };
+
+  //creating user
+  router.post('/registration', function(req, res) {
+    User.findOne({
+      email: req.body.email
+    }, (err, user) => {
+      if(user) {
+        return res.send('exists')
+      } else if (!user) {
+        new User({
+          email: req.body.email,
+          password: req.body.password,
+          firstName: req.body.firstName,
+          lastName: req.body.lastName
+        })
+        .save(function(err, user) {
+          if (err) {
+            res.send(err);
+            return;
+          }
+          res.send(true)
+        })
+      }
+    })
   });
 
   //login

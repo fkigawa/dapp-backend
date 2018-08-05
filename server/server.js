@@ -38,13 +38,15 @@ app.use(session({
 app.use(passport.initialize());
 app.use(passport.session());
 
-
-
 app.get('/', (req, res) => {
   res.send({ express: 'Hello From Express' });
 });
 
 
 
+
+
+
+app.use('/', routes(passport));
 
 app.listen(port, () => console.log(`Listening on port ${port}`));

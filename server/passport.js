@@ -26,10 +26,6 @@ passport.use(new Strategy(function(email, password, done) {
       console.log(user);
       return done(null, false);
     }
-    // if passwords do not match, auth failed
-    if (user.password !== password) {
-      return done(null, false);
-    }
     // auth has has succeeded
     return done(null, user);
   });
