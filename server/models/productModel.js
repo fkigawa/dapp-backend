@@ -1,7 +1,11 @@
 import mongoose from 'mongoose';
 
-var ProductsSchema = new mongoose.Schema({
+var ProductSchema = new mongoose.Schema({
   name: {
+    type: String,
+    required: true
+  },
+  description: {
     type: String,
     required: true
   },
@@ -15,4 +19,4 @@ var ProductsSchema = new mongoose.Schema({
   }
 });
 
-module.exports =  mongoose.model('Products', ProductsSchema)
+module.exports =  mongoose.model('Product', ProductSchema)

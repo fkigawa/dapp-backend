@@ -10,6 +10,8 @@ const Strategy = LocalStrategy.Strategy;
 import passport from './passport'
 var MongoStore = require('connect-mongo')(session);
 import User from './models/userModel';
+import Product from './models/productModel'
+import CartItem from './models/cartItemModel'
 //////////////////////////
 
 const port = process.env.PORT || 5000;
@@ -42,7 +44,35 @@ app.get('/', (req, res) => {
   res.send({ express: 'Hello From Express' });
 });
 
+app.post('/createProduct', (req, res) => {
+  new Product({
+      name: req.body.name,
+      description: req.body.description,
+      price: req.body.price,
+      imageUrl: req.body.imageUrl
+    })
+    .save(function(err, product) {
+      if (err) {
+        res.send(err);
+        return;
+      }
+      res.send(true)
+    })
+})
 
+app.post('/addToCart', (req, res) => {
+  new CartItem({
+    user: req.user._id,
+    product: req.body.productId
+  })
+  .save(function(err, cartItem) {
+    if (err) {
+      res.send(err);
+      return;
+    }
+    res.send(true)
+  })
+})
 
 
 
