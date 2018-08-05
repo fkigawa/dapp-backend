@@ -2,15 +2,15 @@ import mongoose from 'mongoose';
 
 var CartItemSchema = new mongoose.Schema({
   user: {
-    type: Schema.ObjectId,
+    type: mongoose.Schema.ObjectId,
     ref: 'User'
   },
   product: {
-    type: Schema.ObjectId,
+    type: mongoose.Schema.ObjectId,
     ref: 'Product',
   },
   quantity: {
-    type: number,
+    type: Number,
     required: true
   }
 });
