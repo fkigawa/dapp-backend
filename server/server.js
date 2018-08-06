@@ -14,7 +14,7 @@ import Product from './models/productModel'
 import CartItem from './models/cartItemModel'
 //////////////////////////
 
-const port = process.env.PORT || 5000;
+const http = require('http').Server(app);
 
 mongoose.connection.on('connected', () =>{
   console.log('Successfully connected to MongoDB');
@@ -79,4 +79,4 @@ app.post('/addToCart', (req, res) => {
 
 app.use('/', routes(passport));
 
-app.listen(port, () => console.log(`Listening on port ${port}`));
+http.listen(1337);
