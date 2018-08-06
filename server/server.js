@@ -44,6 +44,10 @@ app.get('/', (req, res) => {
   res.send({ express: 'Hello From Express' });
 });
 
+app.get('/user', (req, res) => {
+  res.json({user: req.user})
+})
+
 app.post('/createProduct', (req, res) => {
   new Product({
       name: req.body.name,
