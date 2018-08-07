@@ -67,26 +67,28 @@ app.post('/createProduct', (req, res) => {
 
 app.post('/checkout', (req, res) => {
     let productNames = [];
+    let trackingProducts = [];
     let totalQuantity = req.body.cartItems.length;
     let total = 0;
-    let flag = true;
     let productItem = "";
+    console.log("User ID", req.user);
     req.body.cartItems.map((item)=>{
         productNames.map((productDetail,i)=> {
             if(String(Object.keys(productDetail)) === item.productName){
                 let count = productNames[i][item.productName];
                 productNames[i][item.productName] = ++count;
-                flag = false;
+                trackingProducts.push(item.productName);
             }
         });
-        if(flag){
+
+        if(trackingProducts.indexOf(item.productName)===-1){
             productItem = item.productName;
             productNames.push({[productItem]:1});
         }
         total+= parseFloat(item.price);
     });
   new Transaction({
-    customer: req.body.userId,
+    customer: req.user,
       products: productNames,
       quantity: totalQuantity,
       totalAmount: total,
@@ -99,7 +101,7 @@ app.post('/checkout', (req, res) => {
           }
           else{
               res.send({
-                  customer: req.body.userId,
+                  customer: req.user,
                   products: productNames,
                   quantity: totalQuantity,
                   totalAmount: total,
