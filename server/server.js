@@ -76,15 +76,15 @@ app.post('/checkout', (req, res) => {
     console.log("User ID", req.user);
     req.body.cartItems.map((item)=>{
         productNames.map((productDetail,i)=> {
-            if(String(Object.keys(productDetail)) === item.productName){
-                let count = productNames[i][item.productName];
-                productNames[i][item.productName] = ++count;
-                trackingProducts.push(item.productName);
+            if(String(Object.keys(productDetail)) === item.name){
+                let count = productNames[i][item.name];
+                productNames[i][item.name] = ++count;
+                trackingProducts.push(item.name);
             }
         });
 
-        if(trackingProducts.indexOf(item.productName)===-1){
-            productItem = item.productName;
+        if(trackingProducts.indexOf(item.name)===-1){
+            productItem = item.name;
             productNames.push({[productItem]:1});
         }
         total+= parseFloat(item.price);
