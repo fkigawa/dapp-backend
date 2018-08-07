@@ -13,6 +13,9 @@ import User from './models/userModel';
 import Product from './models/productModel'
 import Transaction from "./models/transactionModel"
 import Category from './models/categoryModel'
+import stripePackage from "stripe";
+const stripe = stripePackage(process.env.STRIPEKEY);
+
 //////////////////////////
 
 const http = require('http').Server(app);
@@ -166,6 +169,24 @@ app.get("/transactions",(req,res)=>{
                 success:true,
                 transactions: transactions
             });
+        }
+    });
+});
+app.post("/payments",(req,res)=>{
+    console.log("Payment Requested..", req.body);
+    let token = req.body.stripeToken;
+    let charge = stripe.charges.create({
+        amount: 444,
+        currency: "usd",
+        description: "test charge",
+        source: token,
+    }, function(err, charge) {
+        if(err) {
+            console.log(err);
+            res.send('Failed')
+        } else {
+            console.log('success payment', charge);
+            res.send(charge)
         }
     });
 });
