@@ -12,6 +12,7 @@ var MongoStore = require('connect-mongo')(session);
 import User from './models/userModel';
 import Product from './models/productModel'
 import CartItem from './models/cartItemModel'
+import Transaction from "./models/transactionModel"
 //////////////////////////
 
 const http = require('http').Server(app);
@@ -62,21 +63,52 @@ app.post('/createProduct', (req, res) => {
       }
       res.send(true)
     })
-})
+});
 
-app.post('/addToCart', (req, res) => {
-  new CartItem({
-    user: req.user._id,
-    product: req.body.productId
+app.post('/checkout', (req, res) => {
+    let productNames = [];
+    let totalQuantity = req.body.cartItems.length;
+    let total = 0;
+    let flag = true;
+    let productItem = "";
+    req.body.cartItems.map((item)=>{
+        productNames.map((productDetail,i)=> {
+            if(String(Object.keys(productDetail)) === item.productName){
+                let count = productNames[i][item.productName];
+                productNames[i][item.productName] = ++count;
+                flag = false;
+            }
+        });
+        if(flag){
+            productItem = item.productName;
+            productNames.push({[productItem]:1});
+        }
+        total+= parseFloat(item.price);
+    });
+  new Transaction({
+    customer: req.body.userId,
+      products: productNames,
+      quantity: totalQuantity,
+      totalAmount: total,
+      datePurchased: new Date()
   })
-  .save(function(err, cartItem) {
-    if (err) {
-      res.send(err);
-      return;
-    }
-    res.send(true)
-  })
-})
+      .save(function(error,transaction){
+          if(error){
+              res.send(error)
+              return;
+          }
+          else{
+              res.send({
+                  customer: req.body.userId,
+                  products: productNames,
+                  quantity: totalQuantity,
+                  totalAmount: total,
+                  datePurchased: new Date(),
+                  success: true
+              });
+          }
+      })
+});
 
 
 
