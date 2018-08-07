@@ -47,7 +47,7 @@ app.get('/', (req, res) => {
 
 app.get('/user', (req, res) => {
   res.json({user: req.user})
-})
+});
 
 app.post('/createProduct', (req, res) => {
   let categoryId;
@@ -72,7 +72,6 @@ app.post('/createProduct', (req, res) => {
 
 
 });
-
 app.post('/checkout', (req, res) => {
     let productNames = [];
     let trackingProducts = [];
@@ -119,7 +118,6 @@ app.post('/checkout', (req, res) => {
           }
       })
 });
-
 app.post('/createCategory', (req, res) => {
   new Category({
     name: req.body.name,
@@ -133,6 +131,20 @@ app.post('/createCategory', (req, res) => {
     res.send(true)
   })
 })
+app.get("/categories", (req,res)=>{
+    Category.find({}, function(err,categories){
+        console.log("Categories", categories);
+        if(err){
+            res.send(err)
+        }
+        else{
+            res.send({
+                success: true,
+                categories: categories
+            });
+        }
+    })
+});
 
 app.use('/', routes(passport));
 
