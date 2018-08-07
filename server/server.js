@@ -50,19 +50,27 @@ app.get('/user', (req, res) => {
 })
 
 app.post('/createProduct', (req, res) => {
-  new Product({
-      name: req.body.name,
-      description: req.body.description,
-      price: req.body.price,
-      imageUrl: req.body.imageUrl
-    })
-    .save(function(err, product) {
-      if (err) {
-        res.send(err);
-        return;
-      }
-      res.send(true)
-    })
+  let categoryId;
+  Category.findOne({
+    name: req.body.category
+  }, (err, category) => {
+    new Product({
+        name: req.body.name,
+        description: req.body.description,
+        price: req.body.price,
+        imageUrl: req.body.imageUrl,
+        category: category._id
+      })
+      .save(function(err, product) {
+        if (err) {
+          res.send(err);
+          return;
+        }
+        res.send(true)
+      })
+  })
+
+
 });
 
 app.post('/checkout', (req, res) => {
@@ -121,9 +129,8 @@ app.post('/createCategory', (req, res) => {
       return;
     }
     res.send(true)
-
-
-
+  })
+})
 
 app.use('/', routes(passport));
 

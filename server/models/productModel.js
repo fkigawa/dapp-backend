@@ -16,6 +16,11 @@ var ProductSchema = new mongoose.Schema({
   imageUrl: {
     type: String,
     required: true
+  },
+  category: {
+    ref: 'Category',
+    type: mongoose.Schema.ObjectId,
+    required: true
   }
 });
 
