@@ -11,7 +11,7 @@ import passport from './passport'
 var MongoStore = require('connect-mongo')(session);
 import User from './models/userModel';
 import Product from './models/productModel'
-import CartItem from './models/cartItemModel'
+import Category from './models/categoryModel'
 //////////////////////////
 
 const http = require('http').Server(app);
@@ -64,12 +64,12 @@ app.post('/createProduct', (req, res) => {
     })
 })
 
-app.post('/addToCart', (req, res) => {
-  new CartItem({
-    user: req.user._id,
-    product: req.body.productId
+app.post('/createCategory', (req, res) => {
+  new Category({
+    name: req.body.name,
+    imageUrl: req.body.imageUrl
   })
-  .save(function(err, cartItem) {
+  .save(function(err, category) {
     if (err) {
       res.send(err);
       return;
