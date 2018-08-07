@@ -31,7 +31,6 @@ mongoose.connect(process.env.MONGODB_URI);
 app.use(express.static(path.join(__dirname, 'build')));
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
-
 //Passport Implementation
 app.use(session({
   secret: 'yer',
@@ -44,11 +43,9 @@ app.use(passport.session());
 app.get('/', (req, res) => {
   res.send({ express: 'Hello From Express' });
 });
-
 app.get('/user', (req, res) => {
   res.json({user: req.user})
 });
-
 app.post('/createProduct', (req, res) => {
   let categoryId;
   Category.findOne({
@@ -69,8 +66,6 @@ app.post('/createProduct', (req, res) => {
         res.send(true)
       })
   })
-
-
 });
 app.post('/checkout', (req, res) => {
     let productNames = [];
@@ -130,7 +125,7 @@ app.post('/createCategory', (req, res) => {
     }
     res.send(true)
   })
-})
+});
 app.get("/categories", (req,res)=>{
     Category.find({}, function(err,categories){
         console.log("Categories", categories);
@@ -145,7 +140,22 @@ app.get("/categories", (req,res)=>{
         }
     })
 });
-
+app.get("/products/:category", (req,res)=>{
+    let category = req.params.category;
+    Category.findOne({name: category}, (err,category)=>{
+        Product.find({category}, function(err,products){
+            console.log("Products", products);
+            if(err){
+                res.send(err)
+            }else{
+                res.send({
+                    success:true,
+                    products: products
+                })
+            }
+        });
+    });
+});
 app.use('/', routes(passport));
 
 http.listen(1337);
