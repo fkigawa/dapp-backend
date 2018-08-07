@@ -156,6 +156,18 @@ app.get("/products/:category", (req,res)=>{
         });
     });
 });
+app.get("/transactions",(req,res)=>{
+    Transaction.find({}, function(err,transactions){
+        if(err){
+            res.send(err)
+        }
+        else{
+            res.send({
+                success:true,
+                transactions: transactions
+            });
+        }
+    });
+});
 app.use('/', routes(passport));
-
 http.listen(1337);
