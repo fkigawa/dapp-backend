@@ -11,8 +11,8 @@ import passport from './passport'
 var MongoStore = require('connect-mongo')(session);
 import User from './models/userModel';
 import Product from './models/productModel'
-import CartItem from './models/cartItemModel'
 import Transaction from "./models/transactionModel"
+import Category from './models/categoryModel'
 //////////////////////////
 
 const http = require('http').Server(app);
@@ -50,19 +50,27 @@ app.get('/user', (req, res) => {
 })
 
 app.post('/createProduct', (req, res) => {
-  new Product({
-      name: req.body.name,
-      description: req.body.description,
-      price: req.body.price,
-      imageUrl: req.body.imageUrl
-    })
-    .save(function(err, product) {
-      if (err) {
-        res.send(err);
-        return;
-      }
-      res.send(true)
-    })
+  let categoryId;
+  Category.findOne({
+    name: req.body.category
+  }, (err, category) => {
+    new Product({
+        name: req.body.name,
+        description: req.body.description,
+        price: req.body.price,
+        imageUrl: req.body.imageUrl,
+        category: category._id
+      })
+      .save(function(err, product) {
+        if (err) {
+          res.send(err);
+          return;
+        }
+        res.send(true)
+      })
+  })
+
+
 });
 
 app.post('/checkout', (req, res) => {
@@ -112,8 +120,19 @@ app.post('/checkout', (req, res) => {
       })
 });
 
-
-
+app.post('/createCategory', (req, res) => {
+  new Category({
+    name: req.body.name,
+    imageUrl: req.body.imageUrl
+  })
+  .save(function(err, category) {
+    if (err) {
+      res.send(err);
+      return;
+    }
+    res.send(true)
+  })
+})
 
 app.use('/', routes(passport));
 
