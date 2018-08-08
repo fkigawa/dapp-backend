@@ -51,6 +51,30 @@ module.exports = function(passport) {
     })
   });
 
+  router.post('/facebookLogin', function(req, res) {
+    User.findOne({
+      email: req.body.email
+    }, (err, user) => {
+      if (user) {
+        console.log('hitting endpoint')
+        res.json('exists');
+        return 'exists';
+      } else if (!user) {
+        new User({
+          email: req.body.email,
+          firstName: req.body.firstName,
+          lastName: req.body.lastName
+        }).save(function(err, user) {
+          if (err) {
+            res.send(err);
+            return;
+          }
+          res.send(true)
+        })
+      }
+    })
+  })
+
   //login
   router.post('/login', passport.authenticate('local'), (req, res) => {
     res.json({
