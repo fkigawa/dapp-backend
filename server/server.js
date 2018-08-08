@@ -14,7 +14,7 @@ import Product from './models/productModel'
 import Transaction from "./models/transactionModel"
 import Category from './models/categoryModel'
 import stripePackage from "stripe";
-const stripe = stripePackage(process.env.STRIPEKEY);
+const stripe = stripePackage("sk_test_lvRIg4KqKKsnzG3SOOWTHtd9");
 
 //////////////////////////
 
@@ -131,7 +131,6 @@ app.post('/createCategory', (req, res) => {
 });
 app.get("/categories", (req,res)=>{
     Category.find({}, function(err,categories){
-        console.log("Categories", categories);
         if(err){
             res.send(err)
         }
@@ -145,8 +144,10 @@ app.get("/categories", (req,res)=>{
 });
 app.get("/products/:category", (req,res)=>{
     let category = req.params.category;
+    console.log("Category found", category );
     Category.findOne({name: category}, (err,category)=>{
-        Product.find({category}, function(err,products){
+        console.log("Category in product", category);
+        Product.find({category:category}, function(err,products){
             console.log("Products", products);
             if(err){
                 res.send(err)
