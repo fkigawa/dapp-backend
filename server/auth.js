@@ -16,7 +16,7 @@ module.exports = function(passport) {
 
   var validatePassword = function(userData) {
     return (userData.password === userData.passwordRepeat)
-  }
+  };
 
 
   //creating user
@@ -30,7 +30,6 @@ module.exports = function(passport) {
         stripe.customers.create({
             description: "Customer for delivery app",
             email: req.body.email,
-            source: "tok_amex"
         }, function(err,customer){
           console.log("Customer in register is ", customer);
             new User({

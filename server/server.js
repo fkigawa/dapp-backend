@@ -175,28 +175,45 @@ app.get("/transactions",(req,res)=>{
     });
 });
 app.post("/payments",(req,res)=>{
-    console.log("Payment Requested..", req.body);
+    console.log("Payment Requested..");
     let token = req.body.stripeToken;
-    console.log("Req.user is", req.user);
+    stripe.customers.update(req.user.stripeID,{
+        source: token
+    },function(err,customer){
+        if(err)
+        {
+            console.log("Error in updating customer", err);
+        }
 
-    let charge = stripe.charges.create({
-        amount: 444,
-        currency: "usd",
-        description: "test charge",
-        source: token,
-        customer: req.user.stripeID
-    }, function(err, charge) {
-        if(err) {
-            console.log(err);
-            res.json({error:err})
-        } else {
-            console.log('success payment', charge);
-            res.send(charge)
+        else{
+            let charge = stripe.charges.create({
+                amount: 55555,
+                currency: "usd",
+                description: "test charge",
+                customer: req.user.stripeID,
+                shipping: {
+                    address: {
+                        line1: "1111 North St"
+                    },
+                    name: "John Doe"
+                },
+
+            }, function(err, charge) {
+                if(err) {
+                    console.log("Error in creating", err);
+                    res.json({error:err})
+                } else {
+                    stripe.customers.retrieve(req.user.stripeID, function(err,customer){
+                        console.log("Customer in retrieve", customer);
+                    });
+                    res.send(charge)
+                }
+            });
         }
     });
 });
 app.get("/custID", (req,res)=>{
-    res.send(req.user.stripeID);
+    res.json({stripeID:req.user.stripeID});
 });
 
 app.use('/', routes(passport));
