@@ -15,6 +15,7 @@ passport.deserializeUser(function(id, done) {
 });
 
 passport.use(new Strategy(function(email, password, done) {
+  console.log(email, password)
   User.findOne({ email: email, password: password }, function (err, user) {
     // if there's an error, finish trying to authenticate (auth failed)
     if (err) {

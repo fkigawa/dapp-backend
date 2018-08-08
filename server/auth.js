@@ -6,6 +6,7 @@ let User = models;
 let router = express.Router();
 import stripePackage from "stripe"
 const stripe = stripePackage(process.env.STRIPE_KEY);
+const url = require('url');
 
 module.exports = function(passport) {
   //registration
@@ -23,7 +24,7 @@ module.exports = function(passport) {
     User.findOne({
       email: req.body.email
     }, (err, user) => {
-      if(user) {
+      if(user && user.facebookInitialLogin === false) {
         return res.send('exists')
       } else if (!user) {
         stripe.customers.create({
@@ -37,7 +38,8 @@ module.exports = function(passport) {
                 password: req.body.password,
                 firstName: req.body.firstName,
                 lastName: req.body.lastName,
-                stripeID: customer.id
+                stripeID: customer.id,
+                facebookInitialLogin: false
             })
                 .save(function(err, user) {
                     if (err) {
@@ -47,6 +49,18 @@ module.exports = function(passport) {
                     res.send(true)
                 })
         });
+      } else if (user && user.facebookInitialLogin === true) {
+          user.password = req.body.password;
+          user.firstName = req.body.firstName;
+          user.lastName = req.body.lastName;
+          user.facebookInitialLogin = false;
+          user.save(function(err, user) {
+              if (err) {
+                  res.send(err);
+                  return;
+              }
+              res.send(true)
+          })
       }
     })
   });
@@ -56,27 +70,44 @@ module.exports = function(passport) {
       email: req.body.email
     }, (err, user) => {
       if (user) {
-        console.log('hitting endpoint')
         res.json('exists');
         return 'exists';
       } else if (!user) {
-        new User({
-          email: req.body.email,
-          firstName: req.body.firstName,
-          lastName: req.body.lastName
-        }).save(function(err, user) {
-          if (err) {
-            res.send(err);
-            return;
-          }
-          res.send(true)
-        })
+        stripe.customers.create({
+            description: "Customer for delivery app",
+            email: req.body.email,
+            source: "tok_amex"
+        }, function(err,customer){
+            new User({
+              email: req.body.email,
+              firstName: req.body.firstName,
+              lastName: req.body.lastName,
+              stripeID: customer.id,
+              password: req.body.id,
+              facebookInitialLogin: true
+            }).save(function(err, user) {
+              if (err) {
+                res.send(err);
+                return;
+              }
+              console.log('we here!')
+              res.redirect(307, url.format({
+                pathname:"/login",
+                query: {
+                  "username": req.body.email,
+                  "password": req.body.id,
+                }
+              }));
+              // res.send(true)
+            })
+        });
       }
     })
   })
 
   //login
   router.post('/login', passport.authenticate('local'), (req, res) => {
+    console.log('passed auth')
     res.json({
       userId: req.user._id,
       success: true

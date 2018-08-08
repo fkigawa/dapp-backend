@@ -23,10 +23,14 @@ var UserSchema = new mongoose.Schema({
     type: Array,
     required: false
   },
-    stripeID:{
+  stripeID:{
     type: String,
-        required: true
-    }
+    required: true
+  },
+  facebookInitialLogin: {
+    type: Boolean,
+    required: true
+  }
 });
 
 var User = mongoose.model('User', UserSchema);
