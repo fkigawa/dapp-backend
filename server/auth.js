@@ -3,7 +3,9 @@ import models from './models/userModel';
 import path from 'path';
 import mongoose from 'mongoose';
 let User = models;
-let router = express.Router()
+let router = express.Router();
+import stripePackage from "stripe"
+const stripe = stripePackage(process.env.STRIPE_KEY);
 
 module.exports = function(passport) {
   //registration
@@ -24,19 +26,27 @@ module.exports = function(passport) {
       if(user) {
         return res.send('exists')
       } else if (!user) {
-        new User({
-          email: req.body.email,
-          password: req.body.password,
-          firstName: req.body.firstName,
-          lastName: req.body.lastName
-        })
-        .save(function(err, user) {
-          if (err) {
-            res.send(err);
-            return;
-          }
-          res.send(true)
-        })
+        stripe.customers.create({
+            description: "Customer for delivery app",
+            email: req.body.email,
+            source: "tok_amex"
+        }, function(err,customer){
+          console.log("Customer in register is ", customer);
+            new User({
+                email: req.body.email,
+                password: req.body.password,
+                firstName: req.body.firstName,
+                lastName: req.body.lastName,
+                stripeID: customer.id
+            })
+                .save(function(err, user) {
+                    if (err) {
+                        res.send(err);
+                        return;
+                    }
+                    res.send(true)
+                })
+        });
       }
     })
   });

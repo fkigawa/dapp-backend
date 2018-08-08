@@ -14,7 +14,7 @@ import Product from './models/productModel'
 import Transaction from "./models/transactionModel"
 import Category from './models/categoryModel'
 import stripePackage from "stripe";
-const stripe = stripePackage("sk_test_lvRIg4KqKKsnzG3SOOWTHtd9");
+const stripe = stripePackage(process.env.STRIPE_KEY);
 
 //////////////////////////
 
@@ -44,6 +44,7 @@ app.use(passport.initialize());
 app.use(passport.session());
 
 app.get('/', (req, res) => {
+    console.log("MY KEY", process.env.STRIPE_KEY);
   res.send({ express: 'Hello From Express' });
 });
 app.get('/user', (req, res) => {
@@ -176,20 +177,27 @@ app.get("/transactions",(req,res)=>{
 app.post("/payments",(req,res)=>{
     console.log("Payment Requested..", req.body);
     let token = req.body.stripeToken;
+    console.log("Req.user is", req.user);
+
     let charge = stripe.charges.create({
         amount: 444,
         currency: "usd",
         description: "test charge",
         source: token,
+        customer: req.user.stripeID
     }, function(err, charge) {
         if(err) {
             console.log(err);
-            res.send('Failed')
+            res.json({error:err})
         } else {
             console.log('success payment', charge);
             res.send(charge)
         }
     });
 });
+app.get("/custID", (req,res)=>{
+    res.send(req.user.stripeID);
+});
+
 app.use('/', routes(passport));
 http.listen(1337);
