@@ -22,10 +22,9 @@ module.exports = function(passport) {
 
   //creating user
   router.post('/registration', function(req, res) {
-    console.log(req.body.email)
-    var emailToLowerCase = req.body.email.toLowerCase();
+    req.body.email = req.body.email.toLowerCase();
     User.findOne({
-      email: emailToLowerCase
+      email: req.body.email
     }, (err, user) => {
       if(user && user.facebookInitialLogin === false) {
         return res.send('exists')
@@ -68,6 +67,7 @@ module.exports = function(passport) {
   });
 
   router.post('/facebookLogin', function(req, res) {
+    req.body.email = req.body.email.toLowerCase()
     User.findOne({
       email: req.body.email
     }, (err, user) => {
@@ -113,13 +113,20 @@ module.exports = function(passport) {
     })
   })
   //
-  // function usernameToLowerCase(req, res, next){
-  //     req.body.username = req.body.username.toLowerCase();
-  //     next();
-  // }
+  function usernameToLowerCase(req, res, next){
+    if (req.body.username) {
+      req.body.username = req.body.username.toLowerCase();
+      next();
+    }
+    if (req.query.username) {
+      req.query.username = req.query.username.toLowerCase();
+      next();
+    }
+
+  }
 
   //login
-  router.post('/login', passport.authenticate('local'), (req, res) => {
+  router.post('/login', usernameToLowerCase, passport.authenticate('local'), (req, res) => {
     console.log('passed auth')
     res.json({
       userId: req.user._id,

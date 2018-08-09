@@ -133,6 +133,7 @@ app.post('/createCategory', (req, res) => {
 });
 
 app.post('/createDriver', (req, res) => {
+  req.body.email = req.body.email.toLowerCase();
   User.findOne({
     email: req.body.email
   }, (err, user) => {
