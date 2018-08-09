@@ -106,7 +106,7 @@ app.post('/checkout', (req, res) => {
               return;
           }
           else{
-              res.send({
+              res.json({
                   customer: req.user,
                   products: productNames,
                   quantity: totalQuantity,
@@ -186,16 +186,20 @@ app.post("/payments",(req,res)=>{
         }
 
         else{
+            console.log("LINE 1", req.body.shippingLineOne);
             let charge = stripe.charges.create({
-                amount: 55555,
+                amount: req.body.amount,
                 currency: "usd",
-                description: "test charge",
+                description: `${req.body.description}`,
                 customer: req.user.stripeID,
                 shipping: {
                     address: {
-                        line1: "1111 North St"
+                        line1: req.body.shippingLineOne,
+                        city: req.body.city,
+                        postal_code:req.body.zipCode,
+                        state:req.body.state,
                     },
-                    name: "John Doe"
+                    name: req.body.name
                 },
 
             }, function(err, charge) {
