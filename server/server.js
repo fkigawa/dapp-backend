@@ -117,6 +117,7 @@ app.post('/checkout', (req, res) => {
           }
       })
 });
+
 app.post('/createCategory', (req, res) => {
   new Category({
     name: req.body.name,
@@ -130,6 +131,24 @@ app.post('/createCategory', (req, res) => {
     res.send(true)
   })
 });
+
+app.post('/createDriver', (req, res) => {
+  User.findOne({
+    email: req.body.email
+  }, (err, user) => {
+    if (user) {
+      user.isDeliverer = true
+      user.save(function(err, user) {
+        if (err) {
+          res.send(err);
+          return;
+        }
+        res.send(true)
+      })
+    }
+  })
+})
+
 app.get("/categories", (req,res)=>{
     Category.find({}, function(err,categories){
         if(err){

@@ -30,6 +30,10 @@ var UserSchema = new mongoose.Schema({
   facebookInitialLogin: {
     type: Boolean,
     required: true
+  },
+  isDeliverer: {
+    type: Boolean,
+    required: false
   }
 });
 

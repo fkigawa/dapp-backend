@@ -115,6 +115,7 @@ module.exports = function(passport) {
     console.log('passed auth')
     res.json({
       userId: req.user._id,
+      isDeliverer: req.user.isDeliverer,
       success: true
     })
   });
