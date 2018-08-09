@@ -161,6 +161,16 @@ app.get("/products/:category", (req,res)=>{
         });
     });
 });
+app.get("/productDetail/:product",(req,res)=>{
+    let product = req.params.product;
+    Product.findOne({name:product},(err,product)=>{
+        console.log("Product is", product);
+        res.json({
+            product: product,
+            success: true
+        });
+    });
+});
 app.get("/transactions",(req,res)=>{
     Transaction.find({}, function(err,transactions){
         if(err){
