@@ -18,15 +18,14 @@ module.exports = function(passport) {
     return (userData.password === userData.passwordRepeat)
   };
 
-  function usernameToLowerCase(req, res, next){
-      req.body.username = req.body.username.toLowerCase();
-      next();
-  }
+
 
   //creating user
   router.post('/registration', function(req, res) {
+    console.log(req.body.email)
+    var emailToLowerCase = req.body.email.toLowerCase();
     User.findOne({
-      email: req.body.email
+      email: emailToLowerCase
     }, (err, user) => {
       if(user && user.facebookInitialLogin === false) {
         return res.send('exists')
@@ -113,9 +112,14 @@ module.exports = function(passport) {
       }
     })
   })
+  //
+  // function usernameToLowerCase(req, res, next){
+  //     req.body.username = req.body.username.toLowerCase();
+  //     next();
+  // }
 
   //login
-  router.post('/login', usernameToLowerCase, passport.authenticate('local'), (req, res) => {
+  router.post('/login', passport.authenticate('local'), (req, res) => {
     console.log('passed auth')
     res.json({
       userId: req.user._id,
