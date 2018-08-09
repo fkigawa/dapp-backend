@@ -18,6 +18,10 @@ module.exports = function(passport) {
     return (userData.password === userData.passwordRepeat)
   };
 
+  function usernameToLowerCase(req, res, next){
+      req.body.username = req.body.username.toLowerCase();
+      next();
+  }
 
   //creating user
   router.post('/registration', function(req, res) {
@@ -111,7 +115,7 @@ module.exports = function(passport) {
   })
 
   //login
-  router.post('/login', passport.authenticate('local'), (req, res) => {
+  router.post('/login', usernameToLowerCase, passport.authenticate('local'), (req, res) => {
     console.log('passed auth')
     res.json({
       userId: req.user._id,
