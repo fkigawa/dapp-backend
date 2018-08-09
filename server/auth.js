@@ -69,8 +69,14 @@ module.exports = function(passport) {
       email: req.body.email
     }, (err, user) => {
       if (user) {
-        res.json('exists');
-        return 'exists';
+        console.log('were in ', user)
+        res.redirect(307, url.format({
+          pathname:"/login",
+          query: {
+            "username": user.email,
+            "password": user.password,
+          }
+        }));
       } else if (!user) {
         stripe.customers.create({
             description: "Customer for delivery app",
