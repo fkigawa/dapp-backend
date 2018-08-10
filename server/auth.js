@@ -33,7 +33,6 @@ module.exports = function(passport) {
             description: "Customer for delivery app",
             email: req.body.email,
         }, function(err,customer){
-          console.log("Customer in register is ", customer);
             new User({
                 email: req.body.email,
                 password: req.body.password,
@@ -72,7 +71,7 @@ module.exports = function(passport) {
       email: req.body.email
     }, (err, user) => {
       if (user) {
-        console.log('were in ', user)
+
         res.redirect(307, url.format({
           pathname:"/login",
           query: {
@@ -98,7 +97,7 @@ module.exports = function(passport) {
                 res.send(err);
                 return;
               }
-              console.log('we here!')
+
               res.redirect(307, url.format({
                 pathname:"/login",
                 query: {
@@ -127,7 +126,7 @@ module.exports = function(passport) {
 
   //login
   router.post('/login', usernameToLowerCase, passport.authenticate('local'), (req, res) => {
-    console.log('passed auth')
+
     res.json({
       userId: req.user._id,
       isDeliverer: req.user.isDeliverer,

@@ -44,7 +44,6 @@ app.use(passport.initialize());
 app.use(passport.session());
 
 app.get('/', (req, res) => {
-    console.log("MY KEY", process.env.STRIPE_KEY);
   res.send({ express: 'Hello From Express' });
 });
 app.get('/user', (req, res) => {
@@ -77,7 +76,6 @@ app.post('/checkout', (req, res) => {
     let totalQuantity = req.body.cartItems.length;
     let total = 0;
     let productItem = "";
-    console.log("User ID", req.user);
     req.body.cartItems.map((item)=>{
         productNames.map((productDetail,i)=> {
             if(String(Object.keys(productDetail)) === item.name){
@@ -165,11 +163,11 @@ app.get("/categories", (req,res)=>{
 });
 app.get("/products/:category", (req,res)=>{
     let category = req.params.category;
-    console.log("Category found", category );
+
     Category.findOne({name: category}, (err,category)=>{
-        console.log("Category in product", category);
+
         Product.find({category:category}, function(err,products){
-            console.log("Products", products);
+
             if(err){
                 res.send(err)
             }else{
@@ -184,7 +182,7 @@ app.get("/products/:category", (req,res)=>{
 app.get("/productDetail/:product",(req,res)=>{
     let product = req.params.product;
     Product.findOne({name:product},(err,product)=>{
-        console.log("Product is", product);
+
         res.json({
             product: product,
             success: true
@@ -216,7 +214,7 @@ app.post("/payments",(req,res)=>{
         }
 
         else{
-            console.log("LINE 1", req.body.shippingLineOne);
+
             let charge = stripe.charges.create({
                 amount: req.body.amount,
                 currency: "usd",
