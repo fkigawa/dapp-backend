@@ -21,7 +21,11 @@ var ProductSchema = new mongoose.Schema({
     ref: 'Category',
     type: mongoose.Schema.ObjectId,
     required: true
-  }
+  },
+    quantity:{
+    type: Number,
+        required: true
+    }
 });
 
 module.exports =  mongoose.model('Product', ProductSchema)

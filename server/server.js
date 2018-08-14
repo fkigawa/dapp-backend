@@ -59,7 +59,8 @@ app.post('/createProduct', (req, res) => {
         description: req.body.description,
         price: req.body.price,
         imageUrl: req.body.imageUrl,
-        category: category._id
+        category: category._id,
+        quantity: 0
       })
       .save(function(err, product) {
         if (err) {
