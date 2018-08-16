@@ -130,7 +130,9 @@ module.exports = function(passport) {
     res.json({
       userId: req.user._id,
       isDeliverer: req.user.isDeliverer,
-      success: true
+      success: true,
+        firstName: req.user.firstName,
+        lastName: req.user.lastName
     })
   });
 
