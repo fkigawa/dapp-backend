@@ -1,6 +1,6 @@
 import mongoose from 'mongoose';
 
-var ProductSchema = new mongoose.Schema({
+let ProductSchema = new mongoose.Schema({
   name: {
     type: String,
     required: true

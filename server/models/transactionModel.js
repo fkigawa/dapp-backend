@@ -10,16 +10,16 @@ let TransactionSchema = new mongoose.Schema({
         type: Array,
         required: true
     },
-    quantity: {
-        type: Number,
-        required: true
-    },
     totalAmount: {
         type: Number,
         required: true
     },
     datePurchased:{
         type: Date,
+        required: true
+    },
+    address: {
+        type: String,
         required: true
     }
 });

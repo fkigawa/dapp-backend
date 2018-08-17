@@ -72,32 +72,32 @@ app.post('/createProduct', (req, res) => {
   })
 });
 app.post('/checkout', (req, res) => {
-    let productNames = [];
-    let trackingProducts = [];
-    let totalQuantity = req.body.cartItems.length;
-    let total = 0;
-    let productItem = "";
-    req.body.cartItems.map((item)=>{
-        productNames.map((productDetail,i)=> {
-            if(String(Object.keys(productDetail)) === item.name){
-                let count = productNames[i][item.name];
-                productNames[i][item.name] = ++count;
-                trackingProducts.push(item.name);
-            }
-        });
-
-        if(trackingProducts.indexOf(item.name)===-1){
-            productItem = item.name;
-            productNames.push({[productItem]:1});
-        }
-        total+= parseFloat(item.price);
-    });
+    // let productNames = [];
+    // let trackingProducts = [];
+    // let totalQuantity = req.body.cartItems.length;
+    // let total = 0;
+    // let productItem = "";
+    // req.body.cartItems.map((item)=>{
+    //     productNames.map((productDetail,i)=> {
+    //         if(String(Object.keys(productDetail)) === item.name){
+    //             let count = productNames[i][item.name];
+    //             productNames[i][item.name] = ++count;
+    //             trackingProducts.push(item.name);
+    //         }
+    //     });
+    //
+    //     if(trackingProducts.indexOf(item.name)===-1){
+    //         productItem = item.name;
+    //         productNames.push({[productItem]:1});
+    //     }
+    //     total+= parseFloat(item.price);
+    // });
   new Transaction({
-    customer: req.user,
-      products: productNames,
-      quantity: totalQuantity,
-      totalAmount: total,
-      datePurchased: new Date()
+      customer: req.user,
+      products: req.body.products,
+      totalAmount: req.body.amount,
+      datePurchased: new Date(),
+      address: req.body.shipping
   })
       .save(function(error,transaction){
           if(error){
@@ -107,10 +107,10 @@ app.post('/checkout', (req, res) => {
           else{
               res.json({
                   customer: req.user,
-                  products: productNames,
-                  quantity: totalQuantity,
-                  totalAmount: total,
+                  products: req.body.products,
+                  totalAmount: req.body.amount/100,
                   datePurchased: new Date(),
+                  address: req.body.shipping,
                   success: true
               });
           }
