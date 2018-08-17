@@ -21,6 +21,14 @@ let TransactionSchema = new mongoose.Schema({
     address: {
         type: String,
         required: true
+    },
+    fullName:{
+        type: String,
+        required: true,
+    },
+    phoneNumber:{
+        type: String,
+        required: true
     }
 });
 
